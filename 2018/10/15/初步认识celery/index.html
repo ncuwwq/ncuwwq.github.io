@@ -125,7 +125,7 @@
 <meta property="og:image" content="http://yoursite.com/2018/10/15/初步认识celery/celery4.PNG">
 <meta property="og:image" content="http://yoursite.com/2018/10/15/初步认识celery/celery6.PNG">
 <meta property="og:image" content="http://yoursite.com/2018/10/15/初步认识celery/celery5.PNG">
-<meta property="og:updated_time" content="2018-10-15T14:26:36.543Z">
+<meta property="og:updated_time" content="2018-10-15T15:28:49.277Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初步认识celery">
 <meta name="twitter:description" content="Celery 的简单认识Celery的架构由三部分组成，消息中间件（broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。 1.消息中间件 Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ, Redis, MongoDB (experimental), Amazon SQS (experiment">
@@ -341,7 +341,7 @@
                 
               
 
-              <time title="创建时间：2018-10-15 20:25:53 / 修改时间：22:26:36" itemprop="dateCreated datePublished" datetime="2018-10-15T20:25:53+08:00">2018-10-15</time>
+              <time title="创建时间：2018-10-15 20:25:53 / 修改时间：23:28:49" itemprop="dateCreated datePublished" datetime="2018-10-15T20:25:53+08:00">2018-10-15</time>
             
 
             
@@ -396,10 +396,11 @@
 <p>Task result store用来存储Worker执行的任务的结果，Celery支持以不同方式存储任务的结果，包括AMQP, Redis，memcached, MongoDB，SQLAlchemy, Django ORM，Apache Cassandra, IronCache</p>
 <p>更多信息可参考文档<a href="http://docs.jinkan.org/docs/celery/getting-started/introduction.html" target="_blank" rel="noopener">http://docs.jinkan.org/docs/celery/getting-started/introduction.html</a></p>
 <h2 id="celery的初步使用"><a href="#celery的初步使用" class="headerlink" title="celery的初步使用"></a>celery的初步使用</h2><p><strong>本地环境</strong></p>
-<p><img src="/2018/10/15/初步认识celery/celery1.PNG" alt="celery1"></p>
+<p>!celery1](初步认识celery\celery1.PNG)</p>
 <p>win10家庭版,python3.6,celery4.2,redis4.0</p>
 <p>(环境安装简单，Python的编辑器使用的是pycharm)</p>
 <h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><p>按照官网文档上的步骤，首先创建一个task.py文件，代码如图</p>
+<p><img src="/2018/10/15/初步认识celery/celery1.PNG" alt="celery1"></p>
 <p>导入celery模块，因为我使用的是redis作为中间件所以还要安装相关依赖</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install celery[redis]</span><br></pre></td></tr></table></figure>
 <p>backend是结果返回的地方，这里celery会把任务处理的结果返回redis中</p>
