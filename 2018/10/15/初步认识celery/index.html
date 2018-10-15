@@ -119,18 +119,13 @@
 <meta property="og:site_name" content="Hans Blog">
 <meta property="og:description" content="Celery 的简单认识Celery的架构由三部分组成，消息中间件（broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。 1.消息中间件 Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ, Redis, MongoDB (experimental), Amazon SQS (experiment">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:image" content="f:/blog/source/_posts/初步认识celery/celery1.PNG">
-<meta property="og:image" content="f:/blog/source/_posts/初步认识celery/celery2.PNG">
-<meta property="og:image" content="f:/blog/source/_posts/初步认识celery/celery3.PNG">
-<meta property="og:image" content="f:/blog/source/_posts/初步认识celery/celery4.PNG">
-<meta property="og:image" content="f:/blog/source/_posts/初步认识celery/celery6.PNG">
-<meta property="og:image" content="f:/blog/source/_posts/初步认识celery/celery5.PNG">
-<meta property="og:updated_time" content="2018-10-15T14:02:56.903Z">
+<meta property="og:updated_time" content="2018-10-15T14:14:26.149Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="初步认识celery">
 <meta name="twitter:description" content="Celery 的简单认识Celery的架构由三部分组成，消息中间件（broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。 1.消息中间件 Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ, Redis, MongoDB (experimental), Amazon SQS (experiment">
-<meta name="twitter:image" content="f:/blog/source/_posts/初步认识celery/celery1.PNG">
 
+
+  
 
 
   <link rel="alternate" href="/atom.xml" title="Hans Blog" type="application/atom+xml" />
@@ -339,7 +334,7 @@
                 
               
 
-              <time title="创建时间：2018-10-15 20:25:53 / 修改时间：22:02:56" itemprop="dateCreated datePublished" datetime="2018-10-15T20:25:53+08:00">2018-10-15</time>
+              <time title="创建时间：2018-10-15 20:25:53 / 修改时间：22:14:26" itemprop="dateCreated datePublished" datetime="2018-10-15T20:25:53+08:00">2018-10-15</time>
             
 
             
@@ -397,25 +392,25 @@
 <p>win10家庭版,python3.6,celery4.2,redis4.0</p>
 <p>(环境安装简单，Python的编辑器使用的是pycharm)</p>
 <h4 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h4><p>按照官网文档上的步骤，首先创建一个task.py文件，代码如图</p>
-<p><img src="F:\blog\source\_posts\初步认识celery\celery1.PNG" alt="celery1"></p>
+
 <p>导入celery模块，因为我使用的是redis作为中间件所以还要安装相关依赖</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install celery[redis]</span><br></pre></td></tr></table></figure>
 <p>backend是结果返回的地方，这里celery会把任务处理的结果返回redis中</p>
 <p>使用@app.task装饰器修饰add函数，接下来我就开始测试了</p>
-<p><img src="F:\blog\source\_posts\初步认识celery\celery2.PNG" alt="celery2"></p>
+
 <p>celery成功跑起来了，接下来进入Python shell添加任务</p>
-<p><img src="F:\blog\source\_posts\初步认识celery\celery3.PNG" alt="celery3"></p>
+
 <p>what？竟然报错了，再去看看celery</p>
-<p><img src="F:\blog\source\_posts\初步认识celery\celery4.PNG" alt="celery4"></p>
+
 <p>很明显报了一个ValueError: not enough values to unpack (expected 3, got 0)错误，百度一下网上有人说是4.0版本不支持win10，但也有人给出了解决方案，切换celery的执行模式，celery默认是执行模式是perfork(多进程)，win10无法正常工作，因此得切换其他模式，我试了两种solo和eventlet，结果都可行</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A task worker --pool=solo -l info</span><br></pre></td></tr></table></figure>
 <p>solo指明一个一个的处理任务，这样处理很慢，另一种eventlet使用的是协成模式，使用前先安装</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install eventlet</span><br><span class="line">celery -A task worker -l info -P eventlet</span><br></pre></td></tr></table></figure>
 <p>然后再次执行add函数</p>
-<p><img src="F:\blog\source\_posts\初步认识celery\celery6.PNG" alt="celery6"></p>
+
 <p>已经成功执行了</p>
 <p>最后再去redis看看结果吧</p>
-<p><img src="F:\blog\source\_posts\初步认识celery\celery5.PNG" alt="celery5"></p>
+
 <p>失败和成功的记录都在里面了，celery的初步使用到此结束了。</p>
 
       
