@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2018-10-16T02:30:32.854Z</updated>
+  <updated>2018-10-16T02:35:40.103Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -17,18 +17,17 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title></title>
+    <title>初步认识celery</title>
     <link href="http://yoursite.com/2018/10/15/%E5%88%9D%E6%AD%A5%E8%AE%A4%E8%AF%86celery/"/>
     <id>http://yoursite.com/2018/10/15/初步认识celery/</id>
-    <published>2018-10-15T12:25:53.277Z</published>
-    <updated>2018-10-16T02:30:32.854Z</updated>
+    <published>2018-10-15T12:25:53.000Z</published>
+    <updated>2018-10-16T02:35:40.103Z</updated>
     
-    <content type="html"><![CDATA[<h2 id="title-初步认识celery"><a href="#title-初步认识celery" class="headerlink" title="title: 初步认识celery"></a>title: 初步认识celery</h2><p>date: 2018-10-15 20:25:53<br>tags: python</p><h1 id="Celery-的简单认识"><a href="#Celery-的简单认识" class="headerlink" title="Celery 的简单认识"></a>Celery 的简单认识</h1><p>Celery的架构由三部分组成，消息中间件（broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。</p><p>1.消息中间件</p><p>Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ, Redis, MongoDB (experimental), Amazon SQS (experimental),CouchDB (experimental), SQLAlchemy (experimental),Django ORM (experimental), IronMQ</p><p>2.任务执行单元</p><p>Worker是Celery提供的任务执行的单元，worker并发的运行在分布式的系统节点中。</p><p>3.任务结果存储</p><p>Task result store用来存储Worker执行的任务的结果，Celery支持以不同方式存储任务的结果，包括AMQP, Redis，memcached, MongoDB，SQLAlchemy, Django ORM，Apache Cassandra, IronCache</p><p>更多信息可参考文档<a href="http://docs.jinkan.org/docs/celery/getting-started/introduction.html" target="_blank" rel="noopener">http://docs.jinkan.org/docs/celery/getting-started/introduction.html</a></p><a id="more"></a><h2 id="celery的初步使用"><a href="#celery的初步使用" class="headerlink" title="celery的初步使用"></a>celery的初步使用</h2><p><strong>本地环境</strong></p><p>!celery1](初步认识celery\celery1.PNG)</p><p>win10家庭版,python3.6,celery4.2,redis4.0</p><p>(环境安装简单，Python的编辑器使用的是pycharm)</p><p><strong>应用</strong></p><p>按照官网文档上的步骤，首先创建一个task.py文件，代码如图</p><p><img src="/2018/10/15/初步认识celery/celery1.PNG" alt="celery1"></p><p>导入celery模块，因为我使用的是redis作为中间件所以还要安装相关依赖</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install celery[redis]</span><br></pre></td></tr></table></figure><p>backend是结果返回的地方，这里celery会把任务处理的结果返回redis中</p><p>使用@app.task装饰器修饰add函数，接下来我就开始测试了</p><p><img src="/2018/10/15/初步认识celery/celery2.PNG" alt="celery2"></p><p>celery成功跑起来了，接下来进入Python shell添加任务</p><p><img src="/2018/10/15/初步认识celery/celery3.PNG" alt="celery3"></p><p>what？竟然报错了，再去看看celery</p><p><img src="/2018/10/15/初步认识celery/celery4.PNG" alt="celery4"></p><p>很明显报了一个ValueError: not enough values to unpack (expected 3, got 0)错误，百度一下网上有人说是4.0版本不支持win10，但也有人给出了解决方案，切换celery的执行模式，celery默认是执行模式是perfork(多进程)，win10无法正常工作，因此得切换其他模式，我试了两种solo和eventlet，结果都可行</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A task worker --pool=solo -l info</span><br></pre></td></tr></table></figure><p>solo指明一个一个的处理任务，这样处理很慢，另一种eventlet使用的是协成模式，使用前先安装</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install eventlet</span><br><span class="line">celery -A task worker -l info -P eventlet</span><br></pre></td></tr></table></figure><p>然后再次执行add函数</p><p><img src="/2018/10/15/初步认识celery/celery6.PNG" alt="celery6"></p><p>已经成功执行了</p><p>最后再去redis看看结果吧</p><p><img src="/2018/10/15/初步认识celery/celery5.PNG" alt=""></p><p>失败和成功的记录都在里面了，celery的初步使用到此结束了。</p>]]></content>
+    <content type="html"><![CDATA[<h2 id="Celery-的简单认识"><a href="#Celery-的简单认识" class="headerlink" title="Celery 的简单认识"></a>Celery 的简单认识</h2><p>Celery的架构由三部分组成，消息中间件（broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。</p><p>1.消息中间件</p><p>Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ, Redis, MongoDB (experimental), Amazon SQS (experimental),CouchDB (experimental), SQLAlchemy (experimental),Django ORM (experimental), IronMQ</p><p>2.任务执行单元</p><p>Worker是Celery提供的任务执行的单元，worker并发的运行在分布式的系统节点中。</p><p>3.任务结果存储</p><p>Task result store用来存储Worker执行的任务的结果，Celery支持以不同方式存储任务的结果，包括AMQP, Redis，memcached, MongoDB，SQLAlchemy, Django ORM，Apache Cassandra, IronCache</p><p>更多信息可参考文档<a href="http://docs.jinkan.org/docs/celery/getting-started/introduction.html" target="_blank" rel="noopener">http://docs.jinkan.org/docs/celery/getting-started/introduction.html</a></p><a id="more"></a><h2 id="celery的初步使用"><a href="#celery的初步使用" class="headerlink" title="celery的初步使用"></a>celery的初步使用</h2><p><strong>本地环境</strong></p><p>!celery1](初步认识celery\celery1.PNG)</p><p>win10家庭版,python3.6,celery4.2,redis4.0</p><p>(环境安装简单，Python的编辑器使用的是pycharm)</p><p><strong>应用</strong></p><p>按照官网文档上的步骤，首先创建一个task.py文件，代码如图</p><p><img src="/2018/10/15/初步认识celery/celery1.PNG" alt="celery1"></p><p>导入celery模块，因为我使用的是redis作为中间件所以还要安装相关依赖</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install celery[redis]</span><br></pre></td></tr></table></figure><p>backend是结果返回的地方，这里celery会把任务处理的结果返回redis中</p><p>使用@app.task装饰器修饰add函数，接下来我就开始测试了</p><p><img src="/2018/10/15/初步认识celery/celery2.PNG" alt="celery2"></p><p>celery成功跑起来了，接下来进入Python shell添加任务</p><p><img src="/2018/10/15/初步认识celery/celery3.PNG" alt="celery3"></p><p>what？竟然报错了，再去看看celery</p><p><img src="/2018/10/15/初步认识celery/celery4.PNG" alt="celery4"></p><p>很明显报了一个ValueError: not enough values to unpack (expected 3, got 0)错误，百度一下网上有人说是4.0版本不支持win10，但也有人给出了解决方案，切换celery的执行模式，celery默认是执行模式是perfork(多进程)，win10无法正常工作，因此得切换其他模式，我试了两种solo和eventlet，结果都可行</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">celery -A task worker --pool=solo -l info</span><br></pre></td></tr></table></figure><p>solo指明一个一个的处理任务，这样处理很慢，另一种eventlet使用的是协成模式，使用前先安装</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pip install eventlet</span><br><span class="line">celery -A task worker -l info -P eventlet</span><br></pre></td></tr></table></figure><p>然后再次执行add函数</p><p><img src="/2018/10/15/初步认识celery/celery6.PNG" alt="celery6"></p><p>已经成功执行了</p><p>最后再去redis看看结果吧</p><p><img src="/2018/10/15/初步认识celery/celery5.PNG" alt=""></p><p>失败和成功的记录都在里面了，celery的初步使用到此结束了。</p>]]></content>
     
     <summary type="html">
     
-      &lt;h2 id=&quot;title-初步认识celery&quot;&gt;&lt;a href=&quot;#title-初步认识celery&quot; class=&quot;headerlink&quot; title=&quot;title: 初步认识celery&quot;&gt;&lt;/a&gt;title: 初步认识celery&lt;/h2&gt;&lt;p&gt;date: 2018-10-15 20:25:53&lt;br&gt;tags: python&lt;/p&gt;
-&lt;h1 id=&quot;Celery-的简单认识&quot;&gt;&lt;a href=&quot;#Celery-的简单认识&quot; class=&quot;headerlink&quot; title=&quot;Celery 的简单认识&quot;&gt;&lt;/a&gt;Celery 的简单认识&lt;/h1&gt;&lt;p&gt;Celery的架构由三部分组成，消息中间件（broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。&lt;/p&gt;
+      &lt;h2 id=&quot;Celery-的简单认识&quot;&gt;&lt;a href=&quot;#Celery-的简单认识&quot; class=&quot;headerlink&quot; title=&quot;Celery 的简单认识&quot;&gt;&lt;/a&gt;Celery 的简单认识&lt;/h2&gt;&lt;p&gt;Celery的架构由三部分组成，消息中间件（broker），任务执行单元（worker）和任务执行结果存储（task result store）组成。&lt;/p&gt;
 &lt;p&gt;1.消息中间件&lt;/p&gt;
 &lt;p&gt;Celery本身不提供消息服务，但是可以方便的和第三方提供的消息中间件集成。包括，RabbitMQ, Redis, MongoDB (experimental), Amazon SQS (experimental),CouchDB (experimental), SQLAlchemy (experimental),Django ORM (experimental), IronMQ&lt;/p&gt;
 &lt;p&gt;2.任务执行单元&lt;/p&gt;
@@ -39,6 +38,8 @@
     
     </summary>
     
+    
+      <category term="python" scheme="http://yoursite.com/tags/python/"/>
     
   </entry>
   
